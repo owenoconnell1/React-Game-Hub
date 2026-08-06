@@ -7,6 +7,7 @@ import { HomePage } from "./pages/HomePage";
 import { LobbyView } from "./pages/LobbyPage";
 import { RPSGamePage } from "./pages/RPSGamePage";
 import { TicTacToePage } from "./pages/TicTacToePage";
+import { WordlePage } from "./pages/WordlePage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { applySavedTheme } from "./utils/theme";
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { path: "/lobby", element: <LobbyView /> },
       { path: "/game/rps", element: (<ProtectedRoute> <RPSGamePage /> </ProtectedRoute>), },
       { path: "/game/tic-tac-toe", element: (<ProtectedRoute> <TicTacToePage /> </ProtectedRoute>), },
+      { path: "/game/wordle", element: (<ProtectedRoute> <WordlePage /> </ProtectedRoute>), },
     ],
   },
 ]);

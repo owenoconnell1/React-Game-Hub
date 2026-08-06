@@ -24,6 +24,7 @@ export function WordlePage(){
   const [word, setWord] = useState("");
   const [shakeRow, setShakeRow] = useState("");
   const [results, setResults] = useState(Array.from({ length:rows }, () => Array(cols).fill("")));
+  const [hasWon, setHasWon] = useState(false);
   useEffect(() => {
     function onKeyDown(event){
       if(event.key === "Backspace"){
@@ -74,7 +75,7 @@ export function WordlePage(){
     setResults(newResults);
     if(guess === word){
       setGameOver(true);
-      alert("You win!");
+      setHasWon(true);
       return;
     }
     const nextAttempt = currentAttempt + 1;
@@ -101,6 +102,7 @@ export function WordlePage(){
           <Row key={row} letters={letters} statuses={results[row]} shake={shakeRow === row} />
         ))}
       </div>
+      {gameOver && !hasWon && <p>The word was: {word}</p>}
       {gameOver && <button onClick={resetGame}>Play Again</button>}
     </div>
   );
@@ -117,13 +119,24 @@ async function getRandomWord(){
   }
 }
 async function isValidWord(word) {
-  try{
-    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-    return response.ok;
+  let status = 502;
+  while(status === 502){
+    try{
+      const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+      status = response.status;
+      console.log("status:", response.status, "for word:", word);
+      if(status !== 502){
+        return response.ok;
+      }
+    }
+    catch(error){
+      console.log("Error", error);
+    }
+    if(status === 502){
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
   }
-  catch(error){
-    return false;
-  }
+  return false;
 }
 function checkWord(guess, answer){
   const result = [];
