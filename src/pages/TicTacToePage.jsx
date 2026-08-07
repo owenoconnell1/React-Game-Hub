@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const room_api = "https://game-room-api.fly.dev/api/rooms";
 
 function Square({ value, onClick}){
     return(
         <button className="square" onClick={onClick}>{value}</button>
     );
 }
-function Board({ xIsNext, squares, onPlay }){
+function Board({ xIsNext, squares, onPlay, disabled }){
     function handleClick(i) {
-        if(calculateWinner(squares) || squares[i]){
+        if(calculateWinner(squares) || squares[i] || disabled){
             return;
         }
         const nextSquares = squares.slice();
@@ -52,49 +54,110 @@ function Board({ xIsNext, squares, onPlay }){
     );
 }
 export function TicTacToePage() {
-    const [history, setHistory] = useState([Array(9).fill(null)]);
-    const [currentMove, setCurrentMove] = useState(0);
-    const xIsNext = currentMove % 2 === 0;
-    const currentSquares =  history[currentMove];
+    const [roomId, setRoomId] = useState(null);
+    const [roomIdInput, setRoomIdInput] = useState("");
+    const [playerSymbol, setPlayerSymbol] = useState(null);
+    const [squares, setSquares] = useState(Array(9).fill(null));
+    const [xIsNext, setXIsNext] = useState(true);
+    const isMyTurn = (playerSymbol === "X" && xIsNext) || (playerSymbol === "O" && !xIsNext);
+    const winner = calculateWinner(squares);
+    
+    useEffect(() => {
+        if(!roomId) return;
+        const interval = setInterval(async () => {
+            const response = await fetch(`${room_api}/${roomId}`);
+            const data = await response.json();
+            setSquares(data.gameState.squares);
+            setXIsNext(data.gameState.xIsNext);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [roomId]);
+
+    async function createRoom() {
+        const response = await fetch(room_api, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                initialState: {
+                    squares: Array(9).fill(null),
+                    xIsNext: true,
+                },
+            }),
+        });
+        const data = await response.json();
+        setRoomId(data.roomId);
+        setPlayerSymbol("X");
+        setSquares(data.gameState.squares);
+        setXIsNext(data.gameState.xIsNext);
+    }
+
+    async function joinRoom() {
+        if(!roomIdInput) return;
+        const response = await fetch(`${room_api}/${roomIdInput}`);
+        const data = await response.json();
+        setRoomId(roomIdInput);
+        setPlayerSymbol("O");
+        setSquares(data.gameState.squares);
+        setXIsNext(data.gameState.xIsNext);
+    }
 
     function handlePlay(nextSquares){
-        const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-        setHistory(nextHistory);
-        setCurrentMove(nextHistory.length - 1);
+        const newXIsNext = !xIsNext;
+        setSquares(nextSquares);
+        setXIsNext(newXIsNext);
+
+        fetch(`${room_api}/${roomId}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                gameState: {
+                    squares: nextSquares,
+                    xIsNext: newXIsNext,
+                },
+            }),
+        });
     }
 
-    function jumpTo(nextMove){
-        setCurrentMove(nextMove);
+    function leaveRoom() {
+        setRoomId(null);
+        setPlayerSymbol(null);
+        setSquares(Array(9).fill(null));
+        setXIsNext(true);
     }
-
-    const moves = history.map((squares, move) => {
-        let description;
-        if(move > 0){
-            description = `Go to move # ${move}`
-        } else {
-            description = "Go to game start";
-        }
-        return(
-            <li key={move}>
-                <button onClick={() => jumpTo(move)}>
-                    {description}
-                </button>
-            </li>
+    if(!roomId) {
+        return (
+            <div className="game">
+                <h2>Tic-Tac-Toe</h2>
+                <button onClick={createRoom}>Create Room</button>
+                <div>
+                    <input 
+                        type="text"
+                        value={roomIdInput}
+                        onChange={(e) => setRoomIdInput(e.target.value)}
+                        placeholder="Enter Room ID"
+                    />
+                    <button onClick={joinRoom}>Join Room</button>
+                </div>
+            </div>
         );
-    });
+    }
+
+
     return(
         <div className="game">
-            <h2>Tic-Tac-Toe</h2>
+            <h2>Multiplayer Tic-Tac-Toe</h2>
+            <p>Room ID: {roomId}</p>
+            <p>You are: {playerSymbol}</p>
+            <p>{winner ? (winner === playerSymbol ? "You win!" : "You lose!") : (isMyTurn ? "Your turn!" : "Waiting for opponent...")}</p>
             <div className="game-board">
                 <Board 
                     xIsNext={xIsNext} 
-                    squares={currentSquares}
+                    squares={squares}
                     onPlay={handlePlay}
+                    disabled={!isMyTurn}
                 />
             </div>
-            <div className="game-info">
-                <ol>{moves}</ol>
-            </div>
+            <button onClick={leaveRoom}>Leave Room</button>
         </div>
     );
 }
