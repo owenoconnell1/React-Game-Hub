@@ -18,12 +18,12 @@ export function SimonSaysPage() {
         setMessage("Watch the sequence!");
         setCurrentStep(0);
         setIsGameOver(false);
-        addStep();
+        addStep([]);
     }
 
-  function addStep() {
+  function addStep(currentSequence) {
         const nextColor = colors[Math.floor(Math.random() * colors.length)];
-        const newSequence = [...sequence, nextColor];
+        const newSequence = [...currentSequence, nextColor];
         setSequence(newSequence);
         setUserSequence([]);
         setCurrentStep(0);
@@ -68,7 +68,7 @@ export function SimonSaysPage() {
             setLevel(nextLevel);
             setIsUserTurn(false);
             setMessage(`Level ${nextLevel}`);
-            setTimeout(addStep, 1000);
+            setTimeout(() => addStep(sequence), 1000);
         }
     }
     return (
