@@ -18,6 +18,7 @@ test.describe("Game Hub", () => {
         await page.getByRole("button", { name: /save settings/i }).click();
     });
     test("navigates from hub into all game page and back", async ({ page }) => {
+        await page.pause();
         await page.goto("/");
         await page.getByRole("list").getByRole("link", { name: /rock paper scissors/i }).click();
 
@@ -25,8 +26,17 @@ test.describe("Game Hub", () => {
         await page.locator('label').filter({ hasText: 'Wizard' }).getByRole('img').click();
         await page.getByRole("button", { name: /save settings/i }).click();
 
-        await page.pause();
-        await page.getByRole('heading', { name: 'Rock Paper Scissors' }).isVisible();
+        await expect(page.getByRole('heading', { name: 'Rock Paper Scissors' })).toBeVisible();
+
+        await page.getByRole('link', { name: 'Tic Tac Toe' }).click();
+        await expect(page.getByRole('heading', { name: 'Tic-Tac-Toe' })).toBeVisible();
+
+        await page.getByRole('link', { name: 'Wordle' }).click();
+        await expect(page.getByRole('heading', { name: 'Wordle' })).toBeVisible();
+
+        await page.getByRole('link', { name: 'Simon Says' }).click();
+        await expect(page.getByRole('heading', { name: 'Simon Says' })).toBeVisible();
+
         await page.getByRole("link", { name: /home/i }).click();
         await expect(page).toHaveURL("/");
     });

@@ -2,6 +2,7 @@ export function HistorySection({ history }) {
   return (
     <ul
       id="history"
+      aria-label="Game history"
       aria-live="polite"
       style={{
         textAlign: `left`,
