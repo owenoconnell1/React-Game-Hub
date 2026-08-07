@@ -19,6 +19,8 @@ export function Navigation() {
         <NavLink to="/game/rps">Rock Paper Scissors</NavLink>
         {` | `}
         <NavLink to="/game/tic-tac-toe">Tic Tac Toe</NavLink>
+        {` | `}
+        <NavLink to="/game/simon-says">Simon Says</NavLink>
 
         {settings && settings.name && (
             <div>

@@ -137,3 +137,32 @@ nav div {
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
 }
+.simon-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 300px;
+}
+.simon-button {
+  height: 150px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.simon-button.active {
+  opacity: 1;
+  box-shadow: 0 0 20px white;
+}
+.simon-button.red {
+  background-color: red;
+}
+.simon-button.green {
+  background-color: green;
+}
+.simon-button.blue {
+  background-color: blue;
+}
+.simon-button.yellow {
+  background-color: yellow;
+}
