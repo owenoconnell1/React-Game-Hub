@@ -16,9 +16,10 @@ test.describe("Game Hub", () => {
         await page.getByLabel(/player name/i).fill("Test Player");
         await page.locator('label').filter({ hasText: 'Wizard' }).getByRole('img').click();
         await page.getByRole("button", { name: /save settings/i }).click();
+        await expect(page).toHaveURL('/');
+        await expect(page.getByText('Test Player')).toBeVisible();
     });
     test("navigates from hub into all game page and back", async ({ page }) => {
-        await page.pause();
         await page.goto("/");
         await page.getByRole("list").getByRole("link", { name: /rock paper scissors/i }).click();
 

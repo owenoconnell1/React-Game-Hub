@@ -19,6 +19,7 @@ export function SimonSaysPage() {
         setCurrentStep(0);
         setIsGameOver(false);
         addStep([]);
+        setLevel(0);
     }
 
   function addStep(currentSequence) {
