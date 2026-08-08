@@ -27,6 +27,9 @@ const router = createBrowserRouter([
       { path: "/game/simon-says", element: (<ProtectedRoute> <SimonSaysPage /> </ProtectedRoute>), },
     ],
   },
+  {
+      baseName: import.meta.env.BASE_URL,
+  }
 ]);
 
 createRoot(document.getElementById("root")).render(
