@@ -26,11 +26,11 @@ const router = createBrowserRouter([
       { path: "/game/wordle", element: (<ProtectedRoute> <WordlePage /> </ProtectedRoute>), },
       { path: "/game/simon-says", element: (<ProtectedRoute> <SimonSaysPage /> </ProtectedRoute>), },
     ],
-  },
+  }],
   {
-      baseName: import.meta.env.BASE_URL,
+      basename: import.meta.env.BASE_URL,
   }
-]);
+);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
