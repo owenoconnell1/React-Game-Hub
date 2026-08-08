@@ -16,6 +16,7 @@ export function HomePage(){
     return(
         <section>
             <h2>Available Games</h2>
+            <h3>Developer: Owen O'Connell</h3>
             <p>Choose a game to play</p>
 
             <input
