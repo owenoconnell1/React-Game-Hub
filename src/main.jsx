@@ -14,19 +14,21 @@ import { applySavedTheme } from "./utils/theme";
 
 applySavedTheme();
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      { path: "/", element: <HomePage /> },
-      { path: "/lobby", element: <LobbyView /> },
-      { path: "/game/rps", element: (<ProtectedRoute> <RPSGamePage /> </ProtectedRoute>), },
-      { path: "/game/tic-tac-toe", element: (<ProtectedRoute> <TicTacToePage /> </ProtectedRoute>), },
-      { path: "/game/wordle", element: (<ProtectedRoute> <WordlePage /> </ProtectedRoute>), },
-      { path: "/game/simon-says", element: (<ProtectedRoute> <SimonSaysPage /> </ProtectedRoute>), },
-    ],
-  }],
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <AppLayout />,
+      children: [
+        { path: "/", element: <HomePage /> },
+        { path: "/lobby", element: <LobbyView /> },
+        { path: "/game/rps", element: (<ProtectedRoute> <RPSGamePage /> </ProtectedRoute>), },
+        { path: "/game/tic-tac-toe", element: (<ProtectedRoute> <TicTacToePage /> </ProtectedRoute>), },
+        { path: "/game/wordle", element: (<ProtectedRoute> <WordlePage /> </ProtectedRoute>), },
+        { path: "/game/simon-says", element: (<ProtectedRoute> <SimonSaysPage /> </ProtectedRoute>), },
+      ],
+    },
+  ],
   {
       basename: import.meta.env.BASE_URL,
   }
